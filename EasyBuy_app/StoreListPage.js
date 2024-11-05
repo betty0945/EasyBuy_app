@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, FlatList, Image, TextInput, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Image, TextInput, TouchableOpacity,SafeAreaView } from 'react-native';
 
 const stores = [
   { id: '1', name: 'ALDI', distance: '2.5 mile', logo: 'https://corporate.aldi.us/fileadmin/fm-dam/logos/ALDI_2017.png' },
@@ -22,6 +22,7 @@ export default function StoreListPage() {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <Text style={styles.title}>EasyBuy</Text>
       <View style={styles.searchContainer}>
@@ -49,10 +50,15 @@ export default function StoreListPage() {
         )}
       />
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff', 
+  },
   container: {
     flex: 1,
     backgroundColor: '#FCEADE',
