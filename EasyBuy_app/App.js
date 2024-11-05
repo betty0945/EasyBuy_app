@@ -13,8 +13,8 @@ const HomeApp = () => {
     <View style={styles.container}>
       {/* < LoginPage />   */}
        {/* <SignUpPage />   */}
-        <StoreListPage/>  
-         {/* <Items />   */}
+        {/* <StoreListPage/>   */}
+         <Items />  
        
       {/* <CartScreen/> */}
 
