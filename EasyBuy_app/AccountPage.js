@@ -32,6 +32,10 @@ const AccountPage = () => {
 const { height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff', 
+  },
   container: {
     flex: 1,
     padding: 20,

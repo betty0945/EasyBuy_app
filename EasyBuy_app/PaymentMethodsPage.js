@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, ScrollView,SafeAreaView } from 'react-native';
 
 const PaymentMethodsPage = () => {
   const handleSavePaymentMethod = () => {
@@ -7,6 +7,7 @@ const PaymentMethodsPage = () => {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={() => {}}>
@@ -27,10 +28,15 @@ const PaymentMethodsPage = () => {
         <Text style={styles.buttonText}>Save Payment Method</Text>
       </Pressable>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fceade', 
+  },
   container: {
     flexGrow: 1,
     padding: 20,
@@ -65,7 +71,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#25ced1',
     marginVertical: 10,
     borderRadius: 5,
     justifyContent: 'center',

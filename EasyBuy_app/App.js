@@ -4,6 +4,10 @@ import Items from './ItemsPage';
 import CartScreen from './CartPage';
 import LoginPage from './Login';
 import SignUpPage from './Sign_up';
+import AccountPage  from './AccountPage';
+import ChangeAddressPage from './ChangeAddressPage';
+import PaymentMethodsPage  from './PaymentMethodsPage';
+import SettingsPage from './SettingsPage';
 
 import StoreListPage from './StoreListPage';
 
@@ -13,8 +17,13 @@ const HomeApp = () => {
     <View style={styles.container}>
       {/* < LoginPage />   */}
        {/* <SignUpPage />   */}
-        {/* <StoreListPage/>   */}
-         <Items />  
+      {/* <AccountPage/>   */}
+        {/* <PaymentMethodsPage />    */}
+               {/* <ChangeAddressPage />   */}
+                   {/* <StoreListPage/>   */}
+                       {/* <SettingsPage/>   */}
+
+         {/* <Items />   */}
        
       {/* <CartScreen/> */}
 

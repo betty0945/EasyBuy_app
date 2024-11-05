@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert,SafeAreaView} from 'react-native';
 
 const ChangeAddressPage = () => {
   const handleAddressChange = () => {
@@ -7,6 +7,7 @@ const ChangeAddressPage = () => {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={() => {}}>
@@ -23,6 +24,7 @@ const ChangeAddressPage = () => {
         <Text style={styles.buttonText}>Save Address</Text>
       </Pressable>
     </View>
+    </SafeAreaView>
   );
 };
 
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#25ced1',
     marginVertical: 10,
     borderRadius: 5,
     justifyContent: 'center',
