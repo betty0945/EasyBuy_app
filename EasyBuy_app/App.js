@@ -1,23 +1,20 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import SignUpPage from './Sign_up';
-import LoginPage from './Login';
-import StoreListPage from './StoreListPage';
+import { View, StyleSheet } from 'react-native';
+import Items from './ItemsPage'; 
 
-
-
-export default function HomeApp() {
+const HomeApp = () => {
   return (
     <View style={styles.container}>
-      
-      <StoreListPage/>
+      <Items />  
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    
-  },
+  }
 });
+
+export default HomeApp;
+
