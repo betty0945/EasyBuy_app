@@ -15,7 +15,7 @@ import StoreListPage from './StoreListPage';
 const HomeApp = () => {
   return (
     <View style={styles.container}>
-      {/* < LoginPage />   */}
+      < LoginPage />  
        {/* <SignUpPage />   */}
       {/* <AccountPage/>   */}
         {/* <PaymentMethodsPage />    */}
