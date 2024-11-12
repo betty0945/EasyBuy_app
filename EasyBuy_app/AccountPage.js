@@ -6,23 +6,24 @@ const AccountPage = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={() => {}}>
-          <Text style={styles.headerText}>EasyBuy</Text>
+          <Text style={styles.headerText} onPress={() => navigation.navigate('Home')}>EasyBuy</Text>
         </Pressable>
         <View style={styles.profileContainer}>
+          {/* Add changing profile picture and name functionality - maybe a popup media picker */} 
           <View style={styles.profilePicture} />
           <Text style={styles.accountName}>John Doe</Text>
         </View>
-        <Pressable onPress={() => {}}>
+        <Pressable onPress={() => {navigation.navigate('Settintgs')}}>
           <Text style={styles.headerText}>Settings</Text>
         </Pressable>
       </View>
-      <Pressable style={styles.button} onPress={() => {}}>
+      <Pressable style={styles.button} onPress={() => {navigation.navigate('OrderHistory')}}>
         <Text style={styles.buttonText}>Order History</Text>
       </Pressable>
-      <Pressable style={styles.button} onPress={() => {}}>
+      <Pressable style={styles.button} onPress={() => {navigation.navigate('ChangeAddress')}}>
         <Text style={styles.buttonText}>Change Address</Text>
       </Pressable>
-      <Pressable style={styles.button} onPress={() => {}}>
+      <Pressable style={styles.button} onPress={() => {navigation.navigate("PaymentMethods")}}>
         <Text style={styles.buttonText}>Payment Methods</Text>
       </Pressable>
     </View>
