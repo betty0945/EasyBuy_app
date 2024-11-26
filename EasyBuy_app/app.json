@@ -12,7 +12,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "simret"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,6 +23,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "main": "node_modules/expo-router/entry",
+    "newArchEnabled": true
   }
 }

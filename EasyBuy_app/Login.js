@@ -1,18 +1,35 @@
 
-//This is the login page which come before everthing 
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { auth } from './FirebaseConfig';
+import { useNavigation } from '@react-navigation/native'; 
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
-  const handleLogin = () => {
-    Alert.alert(
-      'Login Successful',
-      `Email: ${email}`,
-      [{ text: 'OK' }]
-    );
+  const handleLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+    
+      navigation.navigate('StoreList'); 
+    } catch (error) {
+      console.error(error);
+
+      let errorMessage = 'An unknown error occurred. Please try again.';
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No user found with this email.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Invalid password.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'The email address is invalid.';
+
+      }
+      Alert.alert('Login Failed', errorMessage, [{ text: 'OK' }]);
+    }
   };
 
   return (
@@ -67,7 +84,7 @@ const styles = StyleSheet.create({
   button: {
     width: '80%',
     padding: 15,
-    backgroundColor: '#25CED1', // Updated button color
+    backgroundColor: '#25CED1', 
     borderRadius: 5,
     alignItems: 'center',
   },
