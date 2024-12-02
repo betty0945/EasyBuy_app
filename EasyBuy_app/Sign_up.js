@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from './FirebaseConfig'; // Import Firebase configuration
+import { auth, db } from './FirebaseConfig'; 
 import { useNavigation } from '@react-navigation/native';
-import { doc, setDoc } from 'firebase/firestore'; // Firestore functions
+import { doc, setDoc } from 'firebase/firestore'; 
 
 export default function SignUpPage() {
   const [username, setUsername] = useState('');
@@ -19,25 +19,20 @@ export default function SignUpPage() {
     }
 
     try {
-      // Create a new user with email and password in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save the username to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         username: username,
         email: user.email,
         createdAt: new Date().toISOString(),
       });
 
-      // Alert user and navigate to the login page
       Alert.alert('Success', 'Account created successfully! Please log in.', [
         { text: 'OK', onPress: () => navigation.navigate('Login') },
       ]);
     } catch (error) {
       console.error(error);
-
-      // Customize the error message
       let errorMessage = 'An unknown error occurred. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
         errorMessage = 'This email address is already in use.';

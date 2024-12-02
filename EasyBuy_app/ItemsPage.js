@@ -1,8 +1,64 @@
-import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, TextInput, ScrollView, SafeAreaView } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'; // Ensure you have these icons properly installed
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, TextInput, FlatList, SafeAreaView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { db } from './FirebaseConfig'; 
+import { collection, query, getDocs } from 'firebase/firestore';
 
-const Items = () => {
+const Items = ({ route }) => {
+  const { storeId } = route.params; 
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+
+  const fetchItems = async () => {
+    try {
+      const itemsCollection = collection(db, 'Stores', storeId, 'Items');
+      const itemsQuery = query(itemsCollection);
+      const querySnapshot = await getDocs(itemsQuery);
+
+      if (querySnapshot.empty) {
+        console.log('No items found in this store');
+      } else {
+        const itemList = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+       
+        setItems(itemList);
+      }
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (storeId) {
+      fetchItems();
+    }
+  }, [storeId]);
+
+  const filteredItems = items.filter(item => 
+    (item.Name && item.Name.toLowerCase().includes(searchTerm.toLowerCase())) || 
+    (item.Description && item.Description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const Product = ({ name, price, imageUri, rating }) => {
+    return (
+      <View style={styles.product}>
+        <Image source={{ uri: imageUri }} style={styles.productImage} />
+        <Text style={styles.productName}>{name}</Text>
+        <Text style={styles.productPrice}>${price}</Text>
+        <Text style={styles.productRating}>{rating} stars</Text>
+        <TouchableOpacity style={styles.addButton}>
+          <Text style={styles.addButtonText}>Add to cart</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navBar}>
@@ -13,8 +69,10 @@ const Items = () => {
           <Ionicons name="home" size={25} color="black" />
         </TouchableOpacity>
         <TextInput 
-          placeholder="search for items" 
+          placeholder="Search for items" 
           style={styles.searchInput} 
+          value={searchTerm}
+          onChangeText={setSearchTerm} 
         />
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons name="search" size={25} color="black" />
@@ -26,27 +84,29 @@ const Items = () => {
           <Ionicons name="settings" size={25} color="black" />
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.itemsContainer}>
-        <Product name="Carrots" price="$3.99" imageUri="https://www.hhs1.com/hubfs/carrots%20on%20wood-1.jpg" rating="4.5" />
-        <Product name="Onions" price="$5.56" imageUri="https://www.foodpoisoningnews.com/wp-content/uploads/2024/10/fresh-onions-vegetables-stockpack-deposit-photos-scaled.jpg" rating="3" />
-        <Product name="Conditioner" price="$20" imageUri="https://www.westinstore.com/images/products/lrg/westin-hotel-conditioner-HB-304-WT_lrg.webp" rating="5" />
-        <Product name="Bar Soap" price="$7" imageUri="https://shoparchipelago.com/cdn/shop/products/sku_1921223180_03_1400x.jpg?v=1677180648" rating="5" />
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
 
-const Product = ({ name, price, imageUri, rating }) => {
-  return (
-    <View style={styles.product}>
-      <Image source={{ uri: imageUri }} style={styles.productImage} />
-      <Text style={styles.productName}>{name}</Text>
-      <Text style={styles.productPrice}>{price}</Text>
-      <Text style={styles.productRating}>{rating} stars</Text>
-      <TouchableOpacity style={styles.addButton}>
-        <Text style={styles.addButtonText}>add to cart</Text>
-      </TouchableOpacity>
-    </View>
+
+      {loading ? (
+        <Text style={styles.loadingText}>Loading items...</Text>
+      ) : (
+        <FlatList
+          data={filteredItems} 
+          renderItem={({ item }) => (
+            <Product
+              key={item.id}
+              name={item.Name} 
+              price={item.Price} 
+              imageUri={item.imageURL} 
+              rating={item.Rating} 
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          numColumns={2} 
+          columnWrapperStyle={styles.columnWrapper} 
+          ListEmptyComponent={<Text>No items available in this store.</Text>}
+        />
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -75,30 +135,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginHorizontal: 5, 
   },
-  itemsContainer: {
-    padding: 10,
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: 'gray',
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   product: {
+    flex: 0.48, 
     marginBottom: 10,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
   },
   productImage: {
     width: '100%',
-    height: 150,
+    height: 150, 
     borderRadius: 5, 
+    resizeMode: 'contain',
   },
   productName: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 8,
   },
   productPrice: {
-    fontSize: 16,
+    fontSize: 14,
+    marginTop: 4,
   },
   productRating: {
-    fontSize: 14,
+    fontSize: 12,
+    marginTop: 4,
   },
   addButton: {
     backgroundColor: '#25ced1', 
@@ -111,7 +184,7 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#fff',
     textAlign: 'center',
-  }
+  },
 });
 
 export default Items;

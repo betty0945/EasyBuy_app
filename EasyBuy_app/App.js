@@ -11,6 +11,8 @@ import PaymentMethodsPage from './PaymentMethodsPage';
 import SettingsPage from './SettingsPage';
 import StoreListPage from './StoreListPage';
 import OrderHistoryPage from './OrderHistoryPage';
+import ItemsPage from './ItemsPage'; 
+
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,8 @@ const HomeApp = () => {
         <Stack.Screen name="Settings" component={SettingsPage} />
         <Stack.Screen name="StoreList" component={StoreListPage} />
         <Stack.Screen name="OrderHistory" component={OrderHistoryPage} /> 
+        <Stack.Screen name="ItemsPage" component={ItemsPage} />
+        <Stack.Screen name="AccountPage" component={AccountPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

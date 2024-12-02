@@ -1,114 +1,159 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, FlatList, Image, TextInput, TouchableOpacity,SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Image, SafeAreaView, TextInput } from 'react-native';
+import { db } from './FirebaseConfig'; 
+import { collection, getDocs } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; 
 
-const stores = [
-  { id: '1', name: 'ALDI', distance: '2.5 mile', logo: 'https://corporate.aldi.us/fileadmin/fm-dam/logos/ALDI_2017.png' },
-  { id: '2', name: 'Walmart', distance: '3.2 mile', logo: 'https://logocreator.io/wp-content/uploads/2023/11/walmart-logo-vector.png' },
-  { id: '3', name: 'Walgreens', distance: '5 mile', logo: 'https://robclarke.com/wp-content/uploads/2022/10/Walgreens_2-1.jpg' },
-  { id: '1', name: 'ALDI', distance: '2.5 mile', logo: 'https://corporate.aldi.us/fileadmin/fm-dam/logos/ALDI_2017.png' },
-  { id: '2', name: 'Walmart', distance: '3.2 mile', logo: 'https://logocreator.io/wp-content/uploads/2023/11/walmart-logo-vector.png' },
-  { id: '3', name: 'Walgreens', distance: '5 mile', logo: 'https://robclarke.com/wp-content/uploads/2022/10/Walgreens_2-1.jpg' },
-  { id: '1', name: 'ALDI', distance: '2.5 mile', logo: 'https://corporate.aldi.us/fileadmin/fm-dam/logos/ALDI_2017.png' },
-  { id: '2', name: 'Walmart', distance: '3.2 mile', logo: 'https://logocreator.io/wp-content/uploads/2023/11/walmart-logo-vector.png' },
-  { id: '3', name: 'Walgreens', distance: '5 mile', logo: 'https://robclarke.com/wp-content/uploads/2022/10/Walgreens_2-1.jpg' },
-];
+const StorePage = () => {
+  const [stores, setStores] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
-export default function StoreListPage() {
-  const [search, setSearch] = useState('');
-
-  const handleSearch = () => {
-    // Implement search functionality here
-    console.log('Search:', search);
+  const fetchStores = async () => {
+    try {
+      const storesCollection = collection(db, 'Stores');
+      const storeSnapshot = await getDocs(storesCollection);
+      const storeList = storeSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setStores(storeList);
+    } catch (error) {
+      console.error('Error fetching stores:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchStores();
+  }, []);
+
+  const handleStoreSelect = (storeId) => {
+    navigation.navigate('ItemsPage', { storeId });
+  };
+
+  const renderStoreItem = ({ item }) => (
+    <TouchableOpacity
+      key={item.id}
+      onPress={() => handleStoreSelect(item.id)}
+      style={styles.store}
+    >
+      <Image source={{ uri: item.imageURL }} style={styles.storeImage} />
+      <Text style={styles.storeName}>{item.name}</Text>
+      <Text style={styles.storeDescription}>{item.location}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <View style={styles.container}>
-      <Text style={styles.title}>EasyBuy</Text>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search stores..."
-          value={search}
-          onChangeText={setSearch}
+      <View style={styles.navBar}>
+        <TouchableOpacity style={styles.iconButton}>
+          <Ionicons name="cart" size={25} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <Ionicons name="home" size={25} color="black" />
+        </TouchableOpacity>
+        <TextInput 
+          placeholder="Search for items" 
+          style={styles.searchInput} 
         />
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Text style={styles.searchButtonText}>Search</Text>
+        <TouchableOpacity style={styles.iconButton}>
+          <Ionicons name="search" size={25} color="black" />
+        </TouchableOpacity>
+        
+        {/* Account icon that navigates to AccountPage */}
+        <TouchableOpacity 
+          style={styles.iconButton} 
+          onPress={() => navigation.navigate('AccountPage')} 
+        >
+          <Ionicons name="person" size={25} color="black" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.iconButton}>
+          <Ionicons name="settings" size={25} color="black" 
+          onPress={() => navigation.navigate('Settings')} />
+          
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={stores}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.storeItem}>
-            <Image source={{ uri: item.logo }} style={styles.storeLogo} />
-            <View>
-              <Text style={styles.storeName}>{item.name}</Text>
-              <Text style={styles.storeDistance}>{item.distance}</Text>
-            </View>
-          </View>
-        )}
-      />
-    </View>
+
+      {/* Loading state or store list */}
+      {loading ? (
+        <Text style={styles.loadingText}>Loading stores...</Text>
+      ) : (
+        <FlatList
+          data={stores}
+          renderItem={renderStoreItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2} 
+          columnWrapperStyle={styles.columnWrapper} 
+          ListEmptyComponent={<Text>No stores available</Text>}
+        />
+      )}
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff', 
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#FCEADE',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  searchContainer: {
+  navBar: {
     flexDirection: 'row',
-    marginBottom: 20,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    backgroundColor: '#fceade',
+  },
+  iconButton: {
+    padding: 8,
   },
   searchInput: {
     flex: 1,
-    padding: 10,
-    borderWidth: 1,
+    height: 38, 
     borderColor: '#ccc',
+    borderWidth: 1,
     borderRadius: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 5, 
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: 'gray',
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  store: {
+    flex: 0.48, 
+    marginBottom: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
     backgroundColor: '#fff',
   },
-  searchButton: {
-    padding: 10,
-    backgroundColor: '#25CED1',
+  storeImage: {
+    width: '100%',
+    height: 120,
     borderRadius: 5,
-    marginLeft: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  storeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  storeLogo: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
   },
   storeName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    marginTop: 8,
   },
-  storeDistance: {
-    fontSize: 14,
-    color: '#666',
+  storeDescription: {
+    fontSize: 12,
+    marginTop: 4,
+    color: 'gray',
   },
 });
+
+export default StorePage;
