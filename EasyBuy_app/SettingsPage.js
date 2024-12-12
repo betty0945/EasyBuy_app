@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Pressable,SafeAreaView } from 'react-native';
+import React from 'react';
+import { View, Text, Button, StyleSheet, Pressable, SafeAreaView } from 'react-native';
+import { useFontSize } from './FontSizeContext';
 
 const SettingsPage = () => {
-  const [fontSize, setFontSize] = useState(16);
+  const { fontSize, setFontSize } = useFontSize();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={() => {}}>
-          <Text style={styles.headerText}>Account</Text>
-        </Pressable>
-        <Text style={styles.headerText}>Settings</Text>
-      </View>
-      <View style={styles.settingsBox}>
-        <Text style={styles.settingsLabel}>Text Size</Text>
-        <View style={styles.fontSizeControls}>
-          <Button title="-" onPress={() => setFontSize(fontSize - 1)} />
-          <Text style={styles.fontSizeText}>{fontSize}</Text>
-          <Button title="+" onPress={() => setFontSize(fontSize + 1)} />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={() => {}}>
+            <Text style={[styles.headerText, { fontSize }]}>Account</Text>
+          </Pressable>
+          <Text style={[styles.headerText, { fontSize }]}>Settings</Text>
+        </View>
+        <View style={styles.settingsBox}>
+          <Text style={[styles.settingsLabel, { fontSize }]}>Text Size</Text>
+          <View style={styles.fontSizeControls}>
+            <Button title="-" onPress={() => setFontSize(fontSize - 1)} />
+            <Text style={[styles.fontSizeText, { fontSize }]}>{fontSize}</Text>
+            <Button title="+" onPress={() => setFontSize(fontSize + 1)} />
+          </View>
         </View>
       </View>
-    </View>
     </SafeAreaView>
   );
 };
@@ -30,9 +31,10 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-  },safeArea: {
+  },
+  safeArea: {
     flex: 1,
-    backgroundColor: '#FCEADE', 
+    backgroundColor: '#FCEADE',
   },
   header: {
     flexDirection: 'row',
@@ -41,7 +43,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   headerText: {
-    fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
   },
@@ -55,7 +56,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   settingsLabel: {
-    fontSize: 18,
     color: 'black',
   },
   fontSizeControls: {
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fontSizeText: {
-    fontSize: 18,
     marginHorizontal: 10,
     color: 'black',
   },

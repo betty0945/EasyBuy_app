@@ -1,24 +1,22 @@
-
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './FirebaseConfig';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
+import { useFontSize } from './FontSizeContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const { fontSize } = useFontSize();
 
   const handleLogin = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-    
-      navigation.navigate('StoreList'); 
+      navigation.navigate('StoreList');
     } catch (error) {
       console.error(error);
-
       let errorMessage = 'An unknown error occurred. Please try again.';
       if (error.code === 'auth/user-not-found') {
         errorMessage = 'No user found with this email.';
@@ -26,7 +24,6 @@ export default function LoginPage() {
         errorMessage = 'Invalid password.';
       } else if (error.code === 'auth/invalid-email') {
         errorMessage = 'The email address is invalid.';
-
       }
       Alert.alert('Login Failed', errorMessage, [{ text: 'OK' }]);
     }
@@ -34,27 +31,26 @@ export default function LoginPage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>EasyBuy</Text>
+      <Text style={[styles.title, { fontSize }]}>EasyBuy</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      
+        <Text style={[styles.buttonText, { fontSize }]}>Login</Text>
       </TouchableOpacity>
-      <Text > Forgot password</Text>
-      <Text> Create account</Text>
+      <Text style={{ fontSize }}>Forgot password</Text>
+      <Text style={{ fontSize }}>Create account</Text>
     </View>
   );
 }
@@ -64,11 +60,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FCEADE', 
+    backgroundColor: '#FCEADE',
     padding: 20,
   },
   title: {
-    fontSize: 54,
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -84,12 +79,11 @@ const styles = StyleSheet.create({
   button: {
     width: '80%',
     padding: 15,
-    backgroundColor: '#25CED1', 
+    backgroundColor: '#25CED1',
     borderRadius: 5,
     alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
   },
 });

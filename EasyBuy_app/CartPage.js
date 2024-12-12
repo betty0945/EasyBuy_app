@@ -1,28 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFontSize } from './FontSizeContext';
 
-const CartItem = ({ item, onUpdate }) => {
+const CartItem = ({ item, onUpdate, fontSize }) => {
   return (
     <View style={styles.itemContainer}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={[styles.itemName, { fontSize }]}>{item.name}</Text>
+        <Text style={[styles.itemPrice, { fontSize }]}>{`$${item.price.toFixed(2)}`}</Text>
         <View style={styles.quantityControl}>
           <TouchableOpacity onPress={() => onUpdate(item.id, -1)} style={styles.quantityButton}>
-            <Text style={styles.quantityButtonText}>-</Text>
+            <Text style={[styles.quantityButtonText, { fontSize }]}>-</Text>
           </TouchableOpacity>
-          <Text style={styles.quantityText}>{item.quantity}</Text>
+          <Text style={[styles.quantityText, { fontSize }]}>{item.quantity}</Text>
           <TouchableOpacity onPress={() => onUpdate(item.id, 1)} style={styles.quantityButton}>
-            <Text style={styles.quantityButtonText}>+</Text>
+            <Text style={[styles.quantityButtonText, { fontSize }]}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
 };
+
 const CartScreen = () => {
+  const { fontSize } = useFontSize();
   const [items, setItems] = useState([
     { id: 1, name: 'Carrots', price: 3.99, quantity: 2, image: 'https://www.hhs1.com/hubfs/carrots%20on%20wood-1.jpg' },
     { id: 2, name: 'Onions', price: 5.56, quantity: 1, image: 'https://www.foodpoisoningnews.com/wp-content/uploads/2024/10/fresh-onions-vegetables-stockpack-deposit-photos-scaled.jpg'},
@@ -50,7 +53,7 @@ const CartScreen = () => {
         </TouchableOpacity>
         <TextInput 
           placeholder="Search for items" 
-          style={styles.searchInput}
+          style={[styles.searchInput, { fontSize }]}
           placeholderTextColor="#666"
         />
         <TouchableOpacity style={styles.iconButton}>
@@ -65,13 +68,13 @@ const CartScreen = () => {
       </View>
       <ScrollView style={styles.itemsContainer}>
         {items.map(item => (
-          <CartItem key={item.id} item={item} onUpdate={handleUpdateQuantity} />
+          <CartItem key={item.id} item={item} onUpdate={handleUpdateQuantity} fontSize={fontSize} />
         ))}
       </ScrollView>
       <TouchableOpacity style={styles.checkoutButton}>
-        <Text style={styles.checkoutText}>Check out</Text>
+        <Text style={[styles.checkoutText, { fontSize }]}>Check out</Text>
       </TouchableOpacity>
-      <Text style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
+      <Text style={[styles.totalText, { fontSize }]}>Total: ${total.toFixed(2)}</Text>
     </SafeAreaView>
   );
 };
@@ -117,7 +120,6 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 26, 
-   
   },
   itemPrice: {
     fontSize: 18, 
@@ -158,19 +160,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-    itemImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 25,
-      padding: 10, 
-      backgroundColor: '#fff', 
-    },
-    itemContainer: {
-      flexDirection: 'row',
-      marginBottom: 10,
-      alignItems: 'center',
-      padding: 5, 
-    },
+  itemImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 25,
+    padding: 10, 
+    backgroundColor: '#fff', 
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    alignItems: 'center',
+    padding: 5, 
+  },
 });
 
 export default CartScreen;

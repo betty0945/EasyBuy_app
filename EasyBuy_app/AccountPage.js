@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import { useFontSize } from './FontSizeContext';
 
 const AccountPage = () => {
   const [userName, setUserName] = useState('');
@@ -16,6 +17,7 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
+  const { fontSize } = useFontSize();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -131,60 +133,60 @@ const AccountPage = () => {
               {userImage ? (
                 <Image source={{ uri: userImage }} style={styles.profileImage} />
               ) : (
-                <Text style={styles.profilePictureText}>+ Add Image</Text>
+                <Text style={[styles.profilePictureText, { fontSize }]}>+ Add Image</Text>
               )}
             </View>
           </Pressable>
-          <Text style={styles.accountName}>{userName.toUpperCase()}</Text>
+          <Text style={[styles.accountName, { fontSize }]}>{userName.toUpperCase()}</Text>
         </View>
 
         <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>Address:</Text>
+          <Text style={[styles.infoLabel, { fontSize }]}>Address:</Text>
           {userAddress ? (
             <>
-              <Text style={styles.infoText}>
+              <Text style={[styles.infoText, { fontSize }]}>
                 {`${userAddress.streetAddress || ''}, ${userAddress.city || ''}, ${userAddress.state || ''} ${userAddress.zipCode || ''}`}
               </Text>
               <Pressable style={styles.button} onPress={() => navigation.navigate('ChangeAddress')}>
-                <Text style={styles.buttonText}>Edit Address</Text>
+                <Text style={[styles.buttonText, { fontSize }]}>Edit Address</Text>
               </Pressable>
             </>
           ) : (
             <Pressable style={styles.button} onPress={() => navigation.navigate('ChangeAddress')}>
-              <Text style={styles.buttonText}>Add Address</Text>
+              <Text style={[styles.buttonText, { fontSize }]}>Add Address</Text>
             </Pressable>
           )}
         </View>
 
         <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>Payment Method:</Text>
+          <Text style={[styles.infoLabel, { fontSize }]}>Payment Method:</Text>
           {userPaymentMethod ? (
             <>
-              <Text style={styles.infoText}>Card Number: **** **** **** {userPaymentMethod.cardNumber.slice(-4)}</Text>
-              <Text style={styles.infoText}>Expires: {userPaymentMethod.expirationDate}</Text>
-              <Text style={styles.infoText}>Cardholder: {userPaymentMethod.cardholderName}</Text>
+              <Text style={[styles.infoText, { fontSize }]}>Card Number: **** **** **** {userPaymentMethod.cardNumber.slice(-4)}</Text>
+              <Text style={[styles.infoText, { fontSize }]}>Expires: {userPaymentMethod.expirationDate}</Text>
+              <Text style={[styles.infoText, { fontSize }]}>Cardholder: {userPaymentMethod.cardholderName}</Text>
               <Pressable style={styles.button} onPress={() => navigation.navigate('PaymentMethods')}>
-                <Text style={styles.buttonText}>Edit Payment Method</Text>
+                <Text style={[styles.buttonText, { fontSize }]}>Edit Payment Method</Text>
               </Pressable>
             </>
           ) : (
             <Pressable style={styles.button} onPress={() => navigation.navigate('PaymentMethods')}>
-              <Text style={styles.buttonText}>Add Payment Method</Text>
+              <Text style={[styles.buttonText, { fontSize }]}>Add Payment Method</Text>
             </Pressable>
           )}
         </View>
 
         <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>Order History:</Text>
+          <Text style={[styles.infoLabel, { fontSize }]}>Order History:</Text>
           {userOrderHistory.length > 0 ? (
             userOrderHistory.map((order, index) => (
-              <Text key={index} style={styles.infoText}>
+              <Text key={index} style={[styles.infoText, { fontSize }]}>
                 {order}
               </Text>
             ))
           ) : (
             <Pressable style={styles.button} onPress={() => navigation.navigate('OrderHistory')}>
-              <Text style={styles.buttonText}>View Order History</Text>
+              <Text style={[styles.buttonText, { fontSize }]}>View Order History</Text>
             </Pressable>
           )}
         </View>
@@ -270,6 +272,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
     fontSize: 16,
   },
 });

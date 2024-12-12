@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from './FirebaseConfig'; 
 import { useNavigation } from '@react-navigation/native';
 import { doc, setDoc } from 'firebase/firestore'; 
+import { useFontSize } from './FontSizeContext';
 
 export default function SignUpPage() {
   const [username, setUsername] = useState('');
@@ -11,6 +12,7 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('');
   const [retypePassword, setRetypePassword] = useState('');
   const navigation = useNavigation();
+  const { fontSize } = useFontSize();
 
   const handleSignUp = async () => {
     if (password !== retypePassword) {
@@ -48,36 +50,36 @@ export default function SignUpPage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>EasyBuy</Text>
+      <Text style={[styles.title, { fontSize }]}>EasyBuy</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { fontSize }]}
         placeholder="Retype Password"
         value={retypePassword}
         onChangeText={setRetypePassword}
         secureTextEntry
       />
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+        <Text style={[styles.buttonText, { fontSize }]}>Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
@@ -92,7 +94,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -114,6 +115,5 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
   },
 });

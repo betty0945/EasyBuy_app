@@ -4,6 +4,7 @@ import { db } from './FirebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import { useFontSize } from './FontSizeContext';
 
 const ChangeAddressPage = () => {
   const [streetAddress, setStreetAddress] = useState('');
@@ -12,6 +13,7 @@ const ChangeAddressPage = () => {
   const [zipCode, setZipCode] = useState('');
   const [notes, setNotes] = useState('');
   const navigation = useNavigation();
+  const { fontSize } = useFontSize();
 
   const handleAddressChange = async () => {
     if (!streetAddress || !city || !state || !zipCode) {
@@ -26,7 +28,6 @@ const ChangeAddressPage = () => {
         return;
       }
 
-     
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
         address: {
@@ -37,7 +38,6 @@ const ChangeAddressPage = () => {
           notes,
         },
       });
-
 
       Alert.alert('Address Changed', 'Your address has been successfully updated.', [
         {
@@ -56,42 +56,42 @@ const ChangeAddressPage = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()}>
-            <Text style={styles.headerText}>Back</Text>
+            <Text style={[styles.headerText, { fontSize }]}>Back</Text>
           </Pressable>
-          <Text style={styles.headerText}>Change Address</Text>
+          <Text style={[styles.headerText, { fontSize }]}>Change Address</Text>
         </View>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="Street Address"
           value={streetAddress}
           onChangeText={setStreetAddress}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="City"
           value={city}
           onChangeText={setCity}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="State"
           value={state}
           onChangeText={setState}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="Zip Code"
           value={zipCode}
           onChangeText={setZipCode}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize }]}
           placeholder="Additional Notes (Optional)"
           value={notes}
           onChangeText={setNotes}
         />
         <Pressable style={styles.button} onPress={handleAddressChange}>
-          <Text style={styles.buttonText}>Save Address</Text>
+          <Text style={[styles.buttonText, { fontSize }]}>Save Address</Text>
         </Pressable>
       </View>
     </SafeAreaView>
