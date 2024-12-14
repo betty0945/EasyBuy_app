@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, SafeAreaView, Image, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { db } from './FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useNavigation } from '@react-navigation/native';
-import { getAuth, signOut } from 'firebase/auth';  // Import signOut from Firebase Authentication
+import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { getAuth, signOut } from 'firebase/auth';  
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useFontSize } from './FontSizeContext';
@@ -17,7 +17,11 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
+<<<<<<< HEAD
   const { fontSize } = useFontSize();
+=======
+  const currentRoute = useNavigationState((state) => state.routes[state.index].name);
+>>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,27 +61,24 @@ const AccountPage = () => {
         Alert.alert('Permission required', 'You need to allow access to your photos.');
         return;
       }
-  
+
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
       });
-  
+
       if (result.canceled) {
         console.log('Image selection was canceled');
         return;
       }
-  
+
       const { uri } = result.assets[0];
-      console.log('Selected image URI:', uri);
-  
       if (!uri) {
         Alert.alert('Error', 'No image selected. Please try again.');
         return;
       }
-  
-      // Call the upload function
+
       uploadImage(uri);
     } catch (error) {
       console.error('Error during image picker:', error);
@@ -96,11 +97,10 @@ const AccountPage = () => {
     }
   };
 
-  // Handle Sign Out
   const handleSignOut = async () => {
     try {
       await signOut(getAuth());
-      navigation.navigate('Login'); // Navigate to the Login screen after sign-out
+      navigation.navigate('Home');
     } catch (error) {
       Alert.alert('Error', 'Something went wrong while signing out.');
     }
@@ -124,23 +124,30 @@ const AccountPage = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Navigation Bar */}
+ 
       <View style={styles.navBar}>
+
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
+          <Ionicons name="home" size={25} color={currentRoute === 'Home' ? '#25ced1' : 'black'} />
+        </TouchableOpacity>
+       
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('StoreList')}>
-          <Ionicons name="home" size={25} color="black" />
+          <Ionicons name="storefront-outline" size={25} color={currentRoute === 'StoreList' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
+       
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Cart')}>
+          <Ionicons name="cart" size={25} color={currentRoute === 'Cart' ? '#25ced1' : 'black'} />
+        </TouchableOpacity>
+     
         <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="cart" size={25} color="black" onPress={() => navigation.navigate('Cart')} />
+          <Ionicons name="person" size={25} color={currentRoute === 'AccountPage' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="person" size={25} color="black" />
-        </TouchableOpacity>
+       
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Settings')}>
-          <Ionicons name="settings" size={25} color="black" />
+          <Ionicons name="settings" size={25} color={currentRoute === 'Settings' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
       </View>
 
-      {/* Scrollable Content */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.profileSection}>
           <Pressable onPress={handleImagePick}>
@@ -206,7 +213,7 @@ const AccountPage = () => {
           )}
         </View>
 
-        {/* Sign Out Button */}
+ 
         <Pressable style={styles.button} onPress={handleSignOut}>
           <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
@@ -222,18 +229,15 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
     backgroundColor: '#fceade',
-    height: 60,
-    width: '100%',
-    position: 'absolute',
-    top: 0,
-    zIndex: 1,
   },
   scrollContainer: {
     padding: 20,
-    paddingTop: 80, 
+    paddingTop: 80,
   },
   iconButton: {
     padding: 8,

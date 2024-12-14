@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from './FirebaseConfig'; 
 import { useNavigation } from '@react-navigation/native';
@@ -49,6 +49,7 @@ export default function SignUpPage() {
   };
 
   return (
+<<<<<<< HEAD
     <View style={styles.container}>
       <Text style={[styles.title, { fontSize }]}>EasyBuy</Text>
       <TextInput
@@ -80,20 +81,94 @@ export default function SignUpPage() {
       />
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={[styles.buttonText, { fontSize }]}>Sign Up</Text>
+=======
+    <SafeAreaView style={styles.safeArea}>
+
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>← Back</Text>
+>>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
       </TouchableOpacity>
-    </View>
+
+
+      <View style={styles.container}>
+
+        <Image
+          source={require('./easybuylogo2.png')} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
+
+        <Text style={styles.title}>EasyBuy</Text>
+
+      
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Retype Password"
+          value={retypePassword}
+          onChangeText={setRetypePassword}
+          secureTextEntry
+        />
+
+     
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FCEADE',
+  },
+  backButton: {
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  backButtonText: {
+    color: '#25CED1',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FCEADE',
     padding: 20,
   },
+  logo: {
+    width: 300,
+    height: 300,
+    marginBottom: -50,
+  },
   title: {
+<<<<<<< HEAD
+=======
+    fontSize: 28,
+>>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -112,6 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#25CED1',
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',

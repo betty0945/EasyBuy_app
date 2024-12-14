@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, Image, SafeAreaView, TextInput } from 'react-native';
-import { db } from './FirebaseConfig'; 
-import { collection, getDocs } from 'firebase/firestore';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, Image, SafeAreaView, TextInput, StatusBar, Platform } from 'react-native';
+import { db, auth } from './FirebaseConfig';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 
 const StorePage = () => {
   const [stores, setStores] = useState([]);
   const [filteredStores, setFilteredStores] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cartCount, setCartCount] = useState(0);
+  const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
+  const currentRoute = useNavigationState(state => state.routes[state.index].name);
 
-  // Fetch stores from Firebase Firestore
   const fetchStores = async () => {
     try {
       const storesCollection = collection(db, 'Stores');
       const storeSnapshot = await getDocs(storesCollection);
       const storeList = storeSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       setStores(storeList);
-      setFilteredStores(storeList); // Initially set filtered stores to all stores
+      setFilteredStores(storeList);
     } catch (error) {
       console.error('Error fetching stores:', error);
     } finally {
@@ -30,31 +32,47 @@ const StorePage = () => {
     }
   };
 
+
+  const fetchCartCount = async () => {
+    if (!userId) return;
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const cart = userDoc.data()?.Cart || [];
+        setCartCount(cart.length);
+      } else {
+        setCartCount(0);
+      }
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+    }
+  };
+
   useEffect(() => {
     fetchStores();
-  }, []);
+    fetchCartCount();
+  }, [userId]);
 
-  // Filter stores based on the search query
   useEffect(() => {
     if (searchQuery === '') {
-      setFilteredStores(stores); // If search query is empty, show all stores
+      setFilteredStores(stores);
     } else {
       const filtered = stores.filter(store =>
         store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         store.location.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredStores(filtered); // Set filtered stores based on the search
+      setFilteredStores(filtered);
     }
   }, [searchQuery, stores]);
 
-  // Handle store selection to navigate to ItemsPage
   const handleStoreSelect = (storeId) => {
     navigation.navigate('ItemsPage', { storeId });
   };
 
-  // Handle cart icon press to navigate to CartPage
   const handleCartPress = () => {
-    navigation.navigate('Cart'); // Navigate to CartPage
+    navigation.navigate('Cart');
   };
 
   const renderStoreItem = ({ item }) => (
@@ -71,45 +89,64 @@ const StorePage = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fceade" />
       <View style={styles.navBar}>
-        {/* Cart icon */}
+
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
+          <Ionicons
+            name="home"
+            size={25}
+            color={currentRoute === 'Home' ? '#25ced1' : 'black'}
+          />
+        </TouchableOpacity>
+
+    
+        <TouchableOpacity style={styles.iconButton}>
+          <Ionicons
+            name="storefront-outline"
+            size={25}
+            color={ '#25ced1' }
+          />
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.iconButton} onPress={handleCartPress}>
           <Ionicons name="cart" size={25} color="black" />
-        </TouchableOpacity>
-        {/* Home icon */}
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="home" size={25} color="black" />
-        </TouchableOpacity>
-
-        {/* Search Input */}
-        <TextInput 
-          placeholder="Search for stores or items" 
-          style={styles.searchInput}
-          value={searchQuery} // Bind the input value to the search query
-          onChangeText={setSearchQuery} // Update the search query when the user types
-        />
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="search" size={25} color="black" />
+          {cartCount > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{cartCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
 
-        {/* Account icon to navigate to AccountPage */}
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={() => navigation.navigate('AccountPage')} 
+
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('AccountPage')}
         >
           <Ionicons name="person" size={25} color="black" />
         </TouchableOpacity>
 
-        {/* Settings icon to navigate to Settings */}
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={() => navigation.navigate('Settings')} 
+
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Settings')}
         >
           <Ionicons name="settings" size={25} color="black" />
         </TouchableOpacity>
       </View>
 
-      {/* Loading state or store list */}
+      <View style={styles.searchBar}>
+        <TextInput
+          placeholder="Search for stores"
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <TouchableOpacity style={styles.searchButton}>
+          <Ionicons name="search" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
       {loading ? (
         <Text style={styles.loadingText}>Loading stores...</Text>
       ) : (
@@ -117,18 +154,20 @@ const StorePage = () => {
           data={filteredStores}
           renderItem={renderStoreItem}
           keyExtractor={(item) => item.id}
-          numColumns={2} 
-          columnWrapperStyle={styles.columnWrapper} 
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
           ListEmptyComponent={<Text>No stores available</Text>}
         />
       )}
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0,
   },
   navBar: {
     flexDirection: 'row',
@@ -140,15 +179,46 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 8,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10,
+    marginBottom: 20,
   },
   searchInput: {
     flex: 1,
-    height: 38, 
+    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginHorizontal: 5, 
+    marginRight: 10,
+  },
+  searchButton: {
+    height: 40,
+    width: 40,
+    backgroundColor: '#25ced1',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     textAlign: 'center',
@@ -161,7 +231,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   store: {
-    flex: 0.48, 
+    flex: 0.48,
     marginBottom: 10,
     borderColor: '#ccc',
     borderWidth: 1,

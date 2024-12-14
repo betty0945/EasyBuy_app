@@ -175,12 +175,16 @@
 
 // export default PaymentMethodsPage;
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert, SafeAreaView, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { db } from './FirebaseConfig'; 
 import { doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth'; 
 import { useNavigation } from '@react-navigation/native'; 
+<<<<<<< HEAD
 import { useFontSize } from './FontSizeContext';
+=======
+import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the arrow
+>>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
 
 const PaymentMethodsPage = () => {
   const [cardNumber, setCardNumber] = useState('');
@@ -233,6 +237,7 @@ const PaymentMethodsPage = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+<<<<<<< HEAD
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()}>
@@ -296,6 +301,79 @@ const PaymentMethodsPage = () => {
           <Text style={[styles.buttonText, { fontSize }]}>Save Payment Method</Text>
         </Pressable>
       </ScrollView>
+=======
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          {/* Back Arrow */}
+          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Icon name="arrow-back" size={30} color="black" />
+          </Pressable>
+
+          {/* Header */}
+          <Text style={styles.headerTitle}>Payment Methods</Text>
+
+          {/* Input Fields */}
+          <TextInput
+            style={styles.input}
+            placeholder="Card Number"
+            value={cardNumber}
+            onChangeText={setCardNumber}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Expiration Date (MM/YY)"
+            value={expirationDate}
+            onChangeText={setExpirationDate}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="CVV"
+            value={cvv}
+            onChangeText={setCvv}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Cardholder Name"
+            value={cardholderName}
+            onChangeText={setCardholderName}
+          />
+          <Text style={styles.sectionTitle}>Billing Address</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Street Address"
+            value={streetAddress}
+            onChangeText={setStreetAddress}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="City"
+            value={city}
+            onChangeText={setCity}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="State"
+            value={state}
+            onChangeText={setState}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Zip Code"
+            value={zipCode}
+            onChangeText={setZipCode}
+            keyboardType="numeric"
+          />
+          <Pressable style={styles.button} onPress={handleSavePaymentMethod}>
+            <Text style={styles.buttonText}>Save Payment Method</Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+>>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
     </SafeAreaView>
   );
 };
@@ -305,21 +383,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fceade', 
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   container: {
     flexGrow: 1,
     padding: 20,
-    justifyContent: 'center',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+  backButton: {
+    position: 'absolute', // Ensure it stays at the top-left
+    top: 10,              // 10 units from the top
+    left: 10,             // 10 units from the left
+    zIndex: 10,           // Ensure it is above other components
   },
-  headerText: {
-    fontSize: 18,
+  headerTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',  // Center the title horizontally
+    marginBottom: 20,
     color: 'black',
+    marginTop: 10,
   },
   sectionTitle: {
     fontSize: 18,

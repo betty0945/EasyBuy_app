@@ -22,22 +22,71 @@ const HomeApp = () => {
     <FontSizeProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomePage} />
-        <Stack.Screen name="Cart" component={CartScreen} />
-        <Stack.Screen name="Login" component={LoginPage} />
-        <Stack.Screen name="SignUp" component={SignUpPage} />
-        <Stack.Screen name="Account" component={AccountPage} />
-        <Stack.Screen name="ChangeAddress" component={ChangeAddressPage} />
-        <Stack.Screen name="PaymentMethods" component={PaymentMethodsPage} />
-        <Stack.Screen name="Settings" component={SettingsPage} />
-        <Stack.Screen name="StoreList" component={StoreListPage} />
-        <Stack.Screen name="OrderHistory" component={OrderHistoryPage} /> 
-        <Stack.Screen name="ItemsPage" component={ItemsPage} />
-        <Stack.Screen name="AccountPage" component={AccountPage} />
+        <Stack.Screen
+          name="Home"
+          component={HomePage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="Cart"
+          component={CartScreen}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginPage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpPage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="Account"
+          component={AccountPage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="ChangeAddress"
+          component={ChangeAddressPage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="PaymentMethods"
+          component={PaymentMethodsPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsPage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="StoreList"
+          component={StoreListPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OrderHistory"
+          component={OrderHistoryPage}
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen
+          name="ItemsPage"
+          component={ItemsPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AccountPage"
+          component={AccountPage}
+          options={{ headerShown: false }} 
+        />
       </Stack.Navigator>
     </NavigationContainer>
     </FontSizeProvider>
   );
 };
+
 
 export default HomeApp;

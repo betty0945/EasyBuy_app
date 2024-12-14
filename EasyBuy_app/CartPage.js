@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { db, auth } from './FirebaseConfig'; // Firebase config
+import { db, auth } from './FirebaseConfig'; 
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -63,14 +63,14 @@ const CartScreen = () => {
     const updatedItems = items.map(item => {
       if (item.id === itemId) {
         const updatedQuantity = item.quantity + delta;
-        return { ...item, quantity: Math.max(updatedQuantity, 1) }; // Ensure quantity doesn't go below 1
+        return { ...item, quantity: Math.max(updatedQuantity, 1) }; 
       }
       return item;
     });
 
     setItems(updatedItems);
 
-    // Update Firestore with the new quantity
+
     if (user) {
       try {
         const cartDocRef = doc(db, 'Users', user.uid, 'Cart', 'cartItems');

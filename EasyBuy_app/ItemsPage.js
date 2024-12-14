@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, TextInput, FlatList, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, TextInput, FlatList, SafeAreaView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { db, auth } from './FirebaseConfig'; // Ensure you have Firebase and Firebase Auth initialized
+import { db, auth } from './FirebaseConfig';
 import { collection, query, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 
 const Items = ({ route }) => {
   const { storeId } = route.params;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const userId = auth.currentUser?.uid; // Get the user ID from the authenticated user
-  const navigation = useNavigation(); // Initialize the navigation hook
+  const [cartItems, setCartItems] = useState([]);
+  const userId = auth.currentUser?.uid;
+  const navigation = useNavigation();
+  const currentRoute = useNavigationState((state) => state.routes[state.index].name);
 
   const fetchItems = async () => {
     try {
@@ -26,7 +28,6 @@ const Items = ({ route }) => {
           id: doc.id,
           ...doc.data(),
         }));
-       
         setItems(itemList);
       }
     } catch (error) {
@@ -36,46 +37,57 @@ const Items = ({ route }) => {
     }
   };
 
+  const fetchCartCount = async () => {
+    if (!userId) return;
+
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const cart = userDoc.data()?.Cart || [];
+        setCartItems(cart);
+      } else {
+        console.log('User document does not exist');
+        setCartItems([]);
+      }
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+    }
+  };
+
   useEffect(() => {
     if (storeId) {
       fetchItems();
     }
-  }, [storeId]);
+    fetchCartCount();
+  }, [storeId, userId]);
 
-  const filteredItems = items.filter(item => 
-    (item.Name && item.Name.toLowerCase().includes(searchTerm.toLowerCase())) || 
+  const filteredItems = items.filter(item =>
+    (item.Name && item.Name.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (item.Description && item.Description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleAddToCart = async (item) => {
     if (!userId) {
-      console.log('User not logged in');
+      Alert.alert('Error', 'Please log in to add items to your cart.');
       return;
     }
 
     try {
-      const userRef = doc(db, 'Users', userId); // Reference to user's document
-
-      // Check if the user's document exists
+      const userRef = doc(db, 'users', userId);
       const userDoc = await getDoc(userRef);
 
       if (!userDoc.exists()) {
-        // If the document doesn't exist, create it
-        await setDoc(userRef, {
-          Cart: [] // Initialize the cart as an empty array if the user document doesn't exist
-        });
+        await setDoc(userRef, { Cart: [] });
         console.log('User document created');
       }
 
-      // Get the current cart data (if exists)
       const userDocData = userDoc.data();
       const currentCart = userDocData?.Cart || [];
-
-      // Check if the item is already in the cart
       const itemExists = currentCart.some(cartItem => cartItem.itemId === item.id);
 
       if (!itemExists) {
-        // Add the item to the cart only if it's not already in there
         await updateDoc(userRef, {
           Cart: arrayUnion({
             itemId: item.id,
@@ -83,81 +95,102 @@ const Items = ({ route }) => {
             price: item.Price,
             imageURL: item.imageURL,
             rating: item.Rating,
-            quantity: 1, // Set initial quantity to 1
-          })
+            quantity: 1,
+          }),
         });
-        console.log('Item added to cart successfully!');
+
+        setCartItems((prevCartItems) => [...prevCartItems, {
+          itemId: item.id,
+          name: item.Name,
+          price: item.Price,
+          imageURL: item.imageURL,
+          rating: item.Rating,
+          quantity: 1,
+        }]);
+
+        Alert.alert('Added to Cart', `${item.Name} has been added to your cart.`);
       } else {
-        console.log('Item already exists in the cart');
+        Alert.alert('Already in Cart', `${item.Name} is already in your cart.`);
       }
     } catch (error) {
       console.error('Error adding item to cart:', error);
+      Alert.alert('Error', 'Failed to add item to cart. Please try again.');
     }
   };
 
-  const Product = ({ name, price, imageUri, rating, item }) => {
-    return (
-      <View style={styles.product}>
-        <Image source={{ uri: imageUri }} style={styles.productImage} />
-        <Text style={styles.productName}>{name}</Text>
-        <Text style={styles.productPrice}>${price}</Text>
-        <Text style={styles.productRating}>{rating} stars</Text>
-        <TouchableOpacity 
-          style={styles.addButton} 
-          onPress={() => handleAddToCart(item)} // Call the handleAddToCart function
-        >
-          <Text style={styles.addButtonText}>Add to cart</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const Product = ({ name, price, imageUri, rating, item }) => (
+    <View style={styles.product}>
+      <Image source={{ uri: imageUri }} style={styles.productImage} />
+      <Text style={styles.productName}>{name}</Text>
+      <Text style={styles.productPrice}>${price}</Text>
+      <Text style={styles.productRating}>{rating} stars</Text>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => handleAddToCart(item)}
+      >
+        <Text style={styles.addButtonText}>Add to cart</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Navigation Bar */}
       <View style={styles.navBar}>
-        {/* Cart icon */}
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Cart')}>
-          <Ionicons name="cart" size={25} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
+          <Ionicons name="home" size={25} color={currentRoute === 'Home' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-        {/* Home icon */}
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('StoreList')}>
-          <Ionicons name="home" size={25} color="black" />
+          <Ionicons name="storefront-outline" size={25} color={currentRoute === 'StoreList' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-        <TextInput 
-          placeholder="Search for items" 
-          style={styles.searchInput} 
-          value={searchTerm}
-          onChangeText={setSearchTerm} 
-        />
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="search" size={25} color="black" />
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Cart')}>
+          <Ionicons name="cart" size={25} color={currentRoute === 'Cart' ? '#25ced1' : 'black'} />
+          {cartItems.length > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{cartItems.length}</Text>
+            </View>
+          )}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="person" size={25} color="black" onPress={() => navigation.navigate('AccountPage')} />
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('AccountPage')}>
+          <Ionicons name="person" size={25} color={currentRoute === 'AccountPage' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="settings" size={25} color="black" onPress={() => navigation.navigate('Settings')}/>
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Settings')}>
+          <Ionicons name="settings" size={25} color={currentRoute === 'Settings' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
       </View>
 
+      {/* Search Bar */}
+      <View style={styles.searchBar}>
+        <TextInput
+          placeholder="Search for items"
+          style={styles.searchInput}
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+        />
+        <TouchableOpacity style={styles.searchButton}>
+          <Ionicons name="search" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Item List */}
       {loading ? (
         <Text style={styles.loadingText}>Loading items...</Text>
       ) : (
         <FlatList
-          data={filteredItems} 
+          data={filteredItems}
           renderItem={({ item }) => (
             <Product
               key={item.id}
-              name={item.Name} 
-              price={item.Price} 
-              imageUri={item.imageURL} 
-              rating={item.Rating} 
-              item={item} // Pass the full item to the Product component
+              name={item.Name}
+              price={item.Price}
+              imageUri={item.imageURL}
+              rating={item.Rating}
+              item={item}
             />
           )}
           keyExtractor={(item) => item.id}
-          numColumns={2} 
-          columnWrapperStyle={styles.columnWrapper} 
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
           ListEmptyComponent={<Text>No items available in this store.</Text>}
         />
       )}
@@ -168,7 +201,7 @@ const Items = ({ route }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
   },
   navBar: {
     flexDirection: 'row',
@@ -180,15 +213,46 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 8,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10,
+    marginBottom: 20,
   },
   searchInput: {
     flex: 1,
-    height: 38, 
+    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginHorizontal: 5, 
+    marginRight: 10,
+  },
+  searchButton: {
+    height: 40,
+    width: 40,
+    backgroundColor: '#25ced1',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     textAlign: 'center',
@@ -201,7 +265,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   product: {
-    flex: 0.48, 
+    flex: 0.48,
     marginBottom: 10,
     borderColor: '#ccc',
     borderWidth: 1,
@@ -211,8 +275,8 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: '100%',
-    height: 150, 
-    borderRadius: 5, 
+    height: 150,
+    borderRadius: 5,
     resizeMode: 'contain',
   },
   productName: {
@@ -229,12 +293,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   addButton: {
-    backgroundColor: '#25ced1', 
+    backgroundColor: '#25ced1',
     padding: 10,
     marginTop: 10,
-    borderRadius: 5, 
-    width: '100%', 
-    alignItems: 'center', 
+    borderRadius: 5,
+    width: '100%',
+    alignItems: 'center',
   },
   addButtonText: {
     color: '#fff',
