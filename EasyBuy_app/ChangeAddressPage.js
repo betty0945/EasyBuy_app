@@ -54,12 +54,16 @@ const ChangeAddressPage = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+<<<<<<< HEAD
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()}>
             <Text style={[styles.headerText, { fontSize }]}>Back</Text>
           </Pressable>
           <Text style={[styles.headerText, { fontSize }]}>Change Address</Text>
         </View>
+=======
+        
+>>>>>>> aa59602 (Edited the cart page and accountpage)
         <TextInput
           style={[styles.input, { fontSize }]}
           placeholder="Street Address"
@@ -101,7 +105,7 @@ const ChangeAddressPage = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fceade',
   },
   container: {
     flexGrow: 1,

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useFontSize } from './FontSizeContext';
+import { db, auth } from './FirebaseConfig'; // Firebase config
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const CartItem = ({ item, onUpdate, fontSize }) => {
   return (
@@ -24,23 +26,61 @@ const CartItem = ({ item, onUpdate, fontSize }) => {
   );
 };
 
-const CartScreen = () => {
-  const { fontSize } = useFontSize();
-  const [items, setItems] = useState([
-    { id: 1, name: 'Carrots', price: 3.99, quantity: 2, image: 'https://www.hhs1.com/hubfs/carrots%20on%20wood-1.jpg' },
-    { id: 2, name: 'Onions', price: 5.56, quantity: 1, image: 'https://www.foodpoisoningnews.com/wp-content/uploads/2024/10/fresh-onions-vegetables-stockpack-deposit-photos-scaled.jpg'},
-    { id: 3, name: 'Conditioner', price: 20, quantity: 2, image: 'https://www.westinstore.com/images/products/lrg/westin-hotel-conditioner-HB-304-WT_lrg.webp' },
-  ]);
 
-  const handleUpdateQuantity = (id, delta) => {
-    const newItems = items.map(item => {
-      if (item.id === id) {
+
+const CartScreen = () => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const user = getAuth().currentUser;
+
+  const fetchCartItems = async () => {
+    if (user) {
+      try {
+        const cartDocRef = doc(db, 'Users', user.uid, 'Cart', 'cartItems');
+        const cartDocSnap = await getDoc(cartDocRef);
+
+        if (cartDocSnap.exists()) {
+          const cartData = cartDocSnap.data().items || [];
+          setItems(cartData);
+        } else {
+          console.log("No cart data found.");
+          setItems([]);
+        }
+      } catch (error) {
+        console.error("Error fetching cart items: ", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
+  const handleUpdateQuantity = async (itemId, delta) => {
+    const updatedItems = items.map(item => {
+      if (item.id === itemId) {
         const updatedQuantity = item.quantity + delta;
-        return { ...item, quantity: updatedQuantity > 0 ? updatedQuantity : 0 };
+        return { ...item, quantity: Math.max(updatedQuantity, 1) }; // Ensure quantity doesn't go below 1
       }
       return item;
     });
-    setItems(newItems);
+
+    setItems(updatedItems);
+
+    // Update Firestore with the new quantity
+    if (user) {
+      try {
+        const cartDocRef = doc(db, 'Users', user.uid, 'Cart', 'cartItems');
+        await updateDoc(cartDocRef, {
+          items: updatedItems
+        });
+      } catch (error) {
+        console.error("Error updating cart: ", error);
+      }
+    }
   };
 
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -71,6 +111,17 @@ const CartScreen = () => {
           <CartItem key={item.id} item={item} onUpdate={handleUpdateQuantity} fontSize={fontSize} />
         ))}
       </ScrollView>
+
+      {loading ? (
+        <Text style={styles.loadingText}>Loading cart...</Text>
+      ) : (
+        <ScrollView style={styles.itemsContainer}>
+          {items.map(item => (
+            <CartItem key={item.id} item={item} onUpdate={handleUpdateQuantity} />
+          ))}
+        </ScrollView>
+      )}
+
       <TouchableOpacity style={styles.checkoutButton}>
         <Text style={[styles.checkoutText, { fontSize }]}>Check out</Text>
       </TouchableOpacity>
@@ -111,18 +162,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
   },
-  itemInfo: {
+  itemImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 25,
+    padding: 10,
+    backgroundColor: '#fff',
+  },
+  itemDetails: {
     marginLeft: 10,
     flex: 1,
   },
-  itemText: {
-    fontSize: 26,
-  },
   itemName: {
     fontSize: 26, 
+    fontSize: 16,
   },
   itemPrice: {
-    fontSize: 18, 
+    fontSize: 18,
   },
   quantityControl: {
     flexDirection: 'row',
@@ -135,11 +191,12 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
   },
-  quantityAmount: {
-    fontSize: 26,
+  quantityButtonText: {
+    fontSize: 18,
+    color: '#fff',
   },
   quantityText: {
-    fontSize: 26,
+    fontSize: 18,
     color: '#000',
   },
   checkoutButton: {
@@ -160,18 +217,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-  itemImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 25,
-    padding: 10, 
-    backgroundColor: '#fff', 
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-    alignItems: 'center',
-    padding: 5, 
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: 'gray',
   },
 });
 

@@ -7,9 +7,12 @@ import { useNavigation } from '@react-navigation/native';
 
 const StorePage = () => {
   const [stores, setStores] = useState([]);
+  const [filteredStores, setFilteredStores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const navigation = useNavigation();
 
+  // Fetch stores from Firebase Firestore
   const fetchStores = async () => {
     try {
       const storesCollection = collection(db, 'Stores');
@@ -19,6 +22,7 @@ const StorePage = () => {
         ...doc.data()
       }));
       setStores(storeList);
+      setFilteredStores(storeList); // Initially set filtered stores to all stores
     } catch (error) {
       console.error('Error fetching stores:', error);
     } finally {
@@ -30,8 +34,27 @@ const StorePage = () => {
     fetchStores();
   }, []);
 
+  // Filter stores based on the search query
+  useEffect(() => {
+    if (searchQuery === '') {
+      setFilteredStores(stores); // If search query is empty, show all stores
+    } else {
+      const filtered = stores.filter(store =>
+        store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        store.location.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredStores(filtered); // Set filtered stores based on the search
+    }
+  }, [searchQuery, stores]);
+
+  // Handle store selection to navigate to ItemsPage
   const handleStoreSelect = (storeId) => {
     navigation.navigate('ItemsPage', { storeId });
+  };
+
+  // Handle cart icon press to navigate to CartPage
+  const handleCartPress = () => {
+    navigation.navigate('Cart'); // Navigate to CartPage
   };
 
   const renderStoreItem = ({ item }) => (
@@ -49,21 +72,27 @@ const StorePage = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.iconButton}>
+        {/* Cart icon */}
+        <TouchableOpacity style={styles.iconButton} onPress={handleCartPress}>
           <Ionicons name="cart" size={25} color="black" />
         </TouchableOpacity>
+        {/* Home icon */}
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons name="home" size={25} color="black" />
         </TouchableOpacity>
+
+        {/* Search Input */}
         <TextInput 
-          placeholder="Search for items" 
-          style={styles.searchInput} 
+          placeholder="Search for stores or items" 
+          style={styles.searchInput}
+          value={searchQuery} // Bind the input value to the search query
+          onChangeText={setSearchQuery} // Update the search query when the user types
         />
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons name="search" size={25} color="black" />
         </TouchableOpacity>
-        
-        {/* Account icon that navigates to AccountPage */}
+
+        {/* Account icon to navigate to AccountPage */}
         <TouchableOpacity 
           style={styles.iconButton} 
           onPress={() => navigation.navigate('AccountPage')} 
@@ -71,10 +100,12 @@ const StorePage = () => {
           <Ionicons name="person" size={25} color="black" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="settings" size={25} color="black" 
-          onPress={() => navigation.navigate('Settings')} />
-          
+        {/* Settings icon to navigate to Settings */}
+        <TouchableOpacity 
+          style={styles.iconButton} 
+          onPress={() => navigation.navigate('Settings')} 
+        >
+          <Ionicons name="settings" size={25} color="black" />
         </TouchableOpacity>
       </View>
 
@@ -83,7 +114,7 @@ const StorePage = () => {
         <Text style={styles.loadingText}>Loading stores...</Text>
       ) : (
         <FlatList
-          data={stores}
+          data={filteredStores}
           renderItem={renderStoreItem}
           keyExtractor={(item) => item.id}
           numColumns={2} 
@@ -94,7 +125,6 @@ const StorePage = () => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,

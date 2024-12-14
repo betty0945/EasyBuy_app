@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, SafeAreaView, Image, Alert, Touchabl
 import { db } from './FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';  // Import signOut from Firebase Authentication
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useFontSize } from './FontSizeContext';
@@ -57,25 +57,30 @@ const AccountPage = () => {
         Alert.alert('Permission required', 'You need to allow access to your photos.');
         return;
       }
-
+  
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaType.Images,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
       });
-
+  
       if (result.canceled) {
+        console.log('Image selection was canceled');
         return;
       }
-
+  
       const { uri } = result.assets[0];
-      if (uri) {
-        uploadImage(uri);
-      } else {
+      console.log('Selected image URI:', uri);
+  
+      if (!uri) {
         Alert.alert('Error', 'No image selected. Please try again.');
+        return;
       }
+  
+      // Call the upload function
+      uploadImage(uri);
     } catch (error) {
+      console.error('Error during image picker:', error);
       Alert.alert('Error', 'Something went wrong with the image picker.');
     }
   };
@@ -88,6 +93,16 @@ const AccountPage = () => {
       setUserImage(uri);
     } catch (error) {
       Alert.alert('Error', 'Something went wrong while uploading the image.');
+    }
+  };
+
+  // Handle Sign Out
+  const handleSignOut = async () => {
+    try {
+      await signOut(getAuth());
+      navigation.navigate('Login'); // Navigate to the Login screen after sign-out
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong while signing out.');
     }
   };
 
@@ -115,7 +130,7 @@ const AccountPage = () => {
           <Ionicons name="home" size={25} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="cart" size={25} color="black" />
+          <Ionicons name="cart" size={25} color="black" onPress={() => navigation.navigate('Cart')} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons name="person" size={25} color="black" />
@@ -190,6 +205,11 @@ const AccountPage = () => {
             </Pressable>
           )}
         </View>
+
+        {/* Sign Out Button */}
+        <Pressable style={styles.button} onPress={handleSignOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
