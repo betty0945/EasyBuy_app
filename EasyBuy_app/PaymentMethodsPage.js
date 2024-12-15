@@ -180,11 +180,7 @@ import { db } from './FirebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth'; 
 import { useNavigation } from '@react-navigation/native'; 
-<<<<<<< HEAD
-import { useFontSize } from './FontSizeContext';
-=======
 import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the arrow
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
 
 const PaymentMethodsPage = () => {
   const [cardNumber, setCardNumber] = useState('');
@@ -237,71 +233,6 @@ const PaymentMethodsPage = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-<<<<<<< HEAD
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()}>
-            <Text style={[styles.headerText, { fontSize }]}>Account</Text>
-          </Pressable>
-          <Text style={[styles.headerText, { fontSize }]}>Payment Methods</Text>
-        </View>
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="Card Number"
-          value={cardNumber}
-          onChangeText={setCardNumber}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="Expiration Date (MM/YY)"
-          value={expirationDate}
-          onChangeText={setExpirationDate}
-        />
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="CVV"
-          value={cvv}
-          onChangeText={setCvv}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="Cardholder Name"
-          value={cardholderName}
-          onChangeText={setCardholderName}
-        />
-        <Text style={[styles.sectionTitle, { fontSize }]}>Billing Address</Text>
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="Street Address"
-          value={streetAddress}
-          onChangeText={setStreetAddress}
-        />
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="City"
-          value={city}
-          onChangeText={setCity}
-        />
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="State"
-          value={state}
-          onChangeText={setState}
-        />
-        <TextInput
-          style={[styles.input, { fontSize }]}
-          placeholder="Zip Code"
-          value={zipCode}
-          onChangeText={setZipCode}
-          keyboardType="numeric"
-        />
-        <Pressable style={styles.button} onPress={handleSavePaymentMethod}>
-          <Text style={[styles.buttonText, { fontSize }]}>Save Payment Method</Text>
-        </Pressable>
-      </ScrollView>
-=======
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -373,7 +304,6 @@ const PaymentMethodsPage = () => {
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
     </SafeAreaView>
   );
 };

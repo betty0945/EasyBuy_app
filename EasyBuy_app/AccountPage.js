@@ -17,11 +17,10 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
-<<<<<<< HEAD
+HEAD
   const { fontSize } = useFontSize();
-=======
+
   const currentRoute = useNavigationState((state) => state.routes[state.index].name);
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
 
   useEffect(() => {
     const fetchUserData = async () => {

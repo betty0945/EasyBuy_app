@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
+ HEAD
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-=======
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
+
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
@@ -39,30 +37,6 @@ export default function LoginPage() {
   };
 
   return (
-<<<<<<< HEAD
-    <View style={styles.container}>
-      <Text style={[styles.title, { fontSize }]}>EasyBuy</Text>
-      <TextInput
-        style={[styles.input, { fontSize }]}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={[styles.input, { fontSize }]}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={[styles.buttonText, { fontSize }]}>Login</Text>
-      </TouchableOpacity>
-      <Text style={{ fontSize }}>Forgot password</Text>
-      <Text style={{ fontSize }}>Create account</Text>
-    </View>
-=======
     <SafeAreaView style={styles.safeArea}>
   
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -107,7 +81,6 @@ export default function LoginPage() {
         </Text>
       </View>
     </SafeAreaView>
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
   );
 }
 
@@ -161,9 +134,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
   },
-<<<<<<< HEAD
-});
-=======
   link: {
     color: '#25CED1',
     marginTop: 10,
@@ -171,4 +141,3 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)

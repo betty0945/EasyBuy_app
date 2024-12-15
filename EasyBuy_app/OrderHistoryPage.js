@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useFontSize } from './FontSizeContext';
-
-const OrderHistoryPage = () => {
-  const { fontSize } = useFontSize();
-
-  return (
-    <View style={styles.container}>
-      <Text style={[styles.header, { fontSize }]}>Order History</Text>
-      <Text style={[styles.order, { fontSize }]}>Order #1: 2x Item A, 1x Item B - Scheduled for Delivery tomorrow at 3:15PM</Text>
-      {/* Add real order history based on DB schema and what info is stored on an order */}
-      <Text style={[styles.order, { fontSize }]}>Order #2: 1x Item C, 3x Item D - Delivered 11/8 5:02PM</Text>
-      <Text style={[styles.order, { fontSize }]}>Order #3: 5x Item E - Delivered 11/5 3:38PM</Text>
-    </View>
-=======
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { doc, getDoc } from 'firebase/firestore';
@@ -98,7 +81,6 @@ const OrderHistoryPage = () => {
         )}
       </View>
     </SafeAreaView>
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
   );
 };
 
@@ -118,9 +100,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#333',
   },
-<<<<<<< HEAD
-  order: {
-=======
   loadingText: {
     textAlign: 'center',
     fontSize: 18,
@@ -155,7 +134,6 @@ const styles = StyleSheet.create({
   },
   orderDetails: {
     fontSize: 16,
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
     marginBottom: 10,
     color: '#333',
   },

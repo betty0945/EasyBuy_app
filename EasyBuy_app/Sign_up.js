@@ -49,44 +49,10 @@ export default function SignUpPage() {
   };
 
   return (
-<<<<<<< HEAD
-    <View style={styles.container}>
-      <Text style={[styles.title, { fontSize }]}>EasyBuy</Text>
-      <TextInput
-        style={[styles.input, { fontSize }]}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={[styles.input, { fontSize }]}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={[styles.input, { fontSize }]}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={[styles.input, { fontSize }]}
-        placeholder="Retype Password"
-        value={retypePassword}
-        onChangeText={setRetypePassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-        <Text style={[styles.buttonText, { fontSize }]}>Sign Up</Text>
-=======
     <SafeAreaView style={styles.safeArea}>
 
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>← Back</Text>
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
       </TouchableOpacity>
 
 
@@ -165,10 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: -50,
   },
   title: {
-<<<<<<< HEAD
-=======
-    fontSize: 28,
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
+    fontSize:11,
     fontWeight: 'bold',
     marginBottom: 20,
   },

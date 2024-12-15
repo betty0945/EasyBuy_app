@@ -1,26 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import { View, Text, Button, StyleSheet, Pressable, SafeAreaView } from 'react-native';
-import { useFontSize } from './FontSizeContext';
-
-const SettingsPage = () => {
-  const { fontSize, setFontSize } = useFontSize();
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Pressable onPress={() => {}}>
-            <Text style={[styles.headerText, { fontSize }]}>Account</Text>
-          </Pressable>
-          <Text style={[styles.headerText, { fontSize }]}>Settings</Text>
-        </View>
-        <View style={styles.settingsBox}>
-          <Text style={[styles.settingsLabel, { fontSize }]}>Text Size</Text>
-          <View style={styles.fontSizeControls}>
-            <Button title="-" onPress={() => setFontSize(fontSize - 1)} />
-            <Text style={[styles.fontSizeText, { fontSize }]}>{fontSize}</Text>
-=======
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Pressable, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,7 +43,6 @@ const SettingsPage = () => {
           <View style={styles.fontSizeControls}>
             <Button title="-" onPress={() => setFontSize(fontSize - 1)} />
             <Text style={styles.fontSizeText}>{fontSize}</Text>
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
             <Button title="+" onPress={() => setFontSize(fontSize + 1)} />
           </View>
         </View>
@@ -94,14 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-<<<<<<< HEAD
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FCEADE',
-=======
     paddingTop: 20, 
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
   },
   header: {
     flexDirection: 'row',

@@ -4,11 +4,7 @@ import { db } from './FirebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
-<<<<<<< HEAD
-import { useFontSize } from './FontSizeContext';
-=======
 import Ionicons from 'react-native-vector-icons/Ionicons'; 
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
 
 const ChangeAddressPage = () => {
   const [streetAddress, setStreetAddress] = useState('');
@@ -57,18 +53,8 @@ const ChangeAddressPage = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-<<<<<<< HEAD
       <View style={styles.container}>
-<<<<<<< HEAD
-        <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()}>
-            <Text style={[styles.headerText, { fontSize }]}>Back</Text>
-          </Pressable>
-          <Text style={[styles.headerText, { fontSize }]}>Change Address</Text>
-        </View>
-=======
         
->>>>>>> aa59602 (Edited the cart page and accountpage)
         <TextInput
           style={[styles.input, { fontSize }]}
           placeholder="Street Address"
@@ -103,7 +89,7 @@ const ChangeAddressPage = () => {
           <Text style={[styles.buttonText, { fontSize }]}>Save Address</Text>
         </Pressable>
       </View>
-=======
+
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -150,7 +136,7 @@ const ChangeAddressPage = () => {
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
+5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
     </SafeAreaView>
   );
 };
