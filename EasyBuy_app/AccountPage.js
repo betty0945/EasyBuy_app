@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, SafeAreaView, Image, Alert, Touchabl
 import { db } from './FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
-import { getAuth, signOut } from 'firebase/auth';  
+import { getAuth, signOut } from 'firebase/auth';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useFontSize } from './FontSizeContext';
@@ -14,10 +14,10 @@ const AccountPage = () => {
   const [userAddress, setUserAddress] = useState(null);
   const [userPaymentMethod, setUserPaymentMethod] = useState(null);
   const [userOrderHistory, setUserOrderHistory] = useState([]);
+  const [cartItemCount, setCartItemCount] = useState(0); // New state for cart item count
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
-HEAD
   const { fontSize } = useFontSize();
 
   const currentRoute = useNavigationState((state) => state.routes[state.index].name);
@@ -45,12 +45,32 @@ HEAD
         }
       } catch (error) {
         setError(error.message);
-      } finally {
-        setLoading(false);
+      }
+    };
+
+    const fetchCartItemCount = async () => {
+      try {
+        const userId = getAuth().currentUser?.uid;
+        if (!userId) return;
+
+        const cartRef = doc(db, 'users', userId, 'Cart', 'cartItems');
+        const cartDoc = await getDoc(cartRef);
+
+        if (cartDoc.exists()) {
+          const cartData = cartDoc.data().items || [];
+          setCartItemCount(cartData.length); // Set the number of items in the cart
+        } else {
+          setCartItemCount(0); // No items in the cart
+        }
+      } catch (error) {
+        console.error('Error fetching cart item count:', error);
+        setCartItemCount(0);
       }
     };
 
     fetchUserData();
+    fetchCartItemCount();
+    setLoading(false);
   }, []);
 
   const handleImagePick = async () => {
@@ -123,25 +143,28 @@ HEAD
 
   return (
     <SafeAreaView style={styles.safeArea}>
- 
       <View style={styles.navBar}>
-
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
           <Ionicons name="home" size={25} color={currentRoute === 'Home' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-       
+
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('StoreList')}>
           <Ionicons name="storefront-outline" size={25} color={currentRoute === 'StoreList' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-       
+
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Cart')}>
           <Ionicons name="cart" size={25} color={currentRoute === 'Cart' ? '#25ced1' : 'black'} />
+          {cartItemCount > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{cartItemCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
-     
+
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons name="person" size={25} color={currentRoute === 'AccountPage' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
-       
+
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Settings')}>
           <Ionicons name="settings" size={25} color={currentRoute === 'Settings' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
@@ -212,7 +235,6 @@ HEAD
           )}
         </View>
 
- 
         <Pressable style={styles.button} onPress={handleSignOut}>
           <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
@@ -240,6 +262,23 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 8,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   profileSection: {
     alignItems: 'center',

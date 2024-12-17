@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
- HEAD
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Text,Image, View, StyleSheet, TextInput, TouchableOpacity,SafeAreaView, Alert } from 'react-native';
 
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './FirebaseConfig';
@@ -15,13 +14,8 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-<<<<<<< HEAD
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('StoreList');
-=======
       await signInWithEmailAndPassword(auth, email, password);
       navigation.navigate('StoreList'); 
->>>>>>> 5c1d9e2 (Added the add to cart, order history and checkout functionality and adjusted the pages)
     } catch (error) {
       console.error(error);
       let errorMessage = 'An unknown error occurred. Please try again.';

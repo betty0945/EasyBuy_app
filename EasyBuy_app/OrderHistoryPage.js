@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, FlatList, SafeAreaView, ScrollView, Image, Touc
 import { doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from './FirebaseConfig';
-import { useNavigation } from '@react-navigation/native';  // Import useNavigation
-import Icon from 'react-native-vector-icons/Ionicons';  // Import Ionicons for the arrow
+import { useNavigation } from '@react-navigation/native';  
+import Icon from 'react-native-vector-icons/Ionicons';  
 
 const OrderHistoryPage = () => {
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const user = getAuth().currentUser;
-  const navigation = useNavigation();  // Initialize useNavigation hook
+  const navigation = useNavigation(); 
 
   const fetchOrderHistory = async () => {
     if (user) {
@@ -38,13 +38,20 @@ const OrderHistoryPage = () => {
   }, []);
 
   const renderOrderItem = ({ item }) => {
-    const date = new Date(item.date);
-    const formattedDate = date.toLocaleDateString();
-    const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
+    const orderId = item.id || 'N/A'; 
+    const timestamp = item.timestamp;
+  
+    let formattedDate = 'Invalid Date';
+    let formattedTime = '';
+    if (timestamp) {
+      const date = new Date(timestamp); 
+      formattedDate = date.toLocaleDateString();
+      formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+  
     return (
       <View style={styles.orderContainer}>
-        <Text style={styles.orderTitle}>Order ID: {item.orderId}</Text>
+        <Text style={styles.orderTitle}>Order ID: {orderId}</Text>
         <Text style={styles.orderDetails}>Total: ${item.total.toFixed(2)}</Text>
         <Text style={styles.orderDetails}>Date: {formattedDate} at {formattedTime}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.itemsScroll}>
@@ -59,12 +66,13 @@ const OrderHistoryPage = () => {
       </View>
     );
   };
+  
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Icon name="arrow-back" size={30} color="#333" />  {/* Back arrow icon */}
+          <Icon name="arrow-back" size={30} color="#333" />  
         </TouchableOpacity>
         <Text style={styles.header}>Order History</Text>
         {loading ? (
@@ -174,7 +182,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     left: 20,
-    zIndex: 1,  // Ensures it's above other elements
   },
 });
 
