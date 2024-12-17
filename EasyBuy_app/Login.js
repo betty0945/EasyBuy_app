@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
-import { Text,Image, View, StyleSheet, TextInput, TouchableOpacity,SafeAreaView, Alert } from 'react-native';
-
+import {
+  Text,
+  Image,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
@@ -15,7 +27,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('StoreList'); 
+      navigation.navigate('StoreList');
     } catch (error) {
       console.error(error);
       let errorMessage = 'An unknown error occurred. Please try again.';
@@ -32,48 +44,56 @@ export default function LoginPage() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-  
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>← Back</Text>
-      </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoidingContainer}
+        >
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
 
-      <View style={styles.container}>
-   
-        <Image 
-          source={require('./easybuylogo2.png')} 
-          style={styles.logo} 
-          resizeMode="contain" 
-        />
+          <View style={styles.container}>
+            <Image
+              source={require('./easybuylogo2text.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
-        <Text style={styles.title}>EasyBuy</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-  
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-   
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-     
-        <Text style={styles.link} onPress={() => Alert.alert('Reset Password', 'Redirect to reset password functionality.')}>
-          Forgot password
-        </Text>
-        <Text style={styles.link} onPress={() => navigation.navigate('SignUp')}>
-          Create account
-        </Text>
-      </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <Text
+              style={styles.link}
+              onPress={() =>
+                Alert.alert('Reset Password', 'Redirect to reset password functionality.')
+              }
+            >
+              Forgot password
+            </Text>
+            <Text style={styles.link} onPress={() => navigation.navigate('SignUp')}>
+              Create account
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -82,6 +102,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  keyboardAvoidingContainer: {
+    flex: 1,
   },
   backButton: {
     marginTop: 10,

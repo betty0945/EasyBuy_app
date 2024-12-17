@@ -18,7 +18,7 @@ const HomePage = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Image 
-          source={require('./easybuylogo2.png')} 
+          source={require('./easybuylogo2text.png')} 
           style={styles.logo} 
           resizeMode="contain" 
         />

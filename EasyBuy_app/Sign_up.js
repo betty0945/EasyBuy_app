@@ -1,9 +1,22 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, Image, SafeAreaView } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from './FirebaseConfig'; 
+import { auth, db } from './FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
-import { doc, setDoc } from 'firebase/firestore'; 
+import { doc, setDoc } from 'firebase/firestore';
 import { useFontSize } from './FontSizeContext';
 
 export default function SignUpPage() {
@@ -50,57 +63,58 @@ export default function SignUpPage() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoidingContainer}
+        >
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>← Back</Text>
-      </TouchableOpacity>
+          <View style={styles.container}>
+            <Image
+              source={require('./easybuylogo2text.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
+          
 
-      <View style={styles.container}>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Retype Password"
+              value={retypePassword}
+              onChangeText={setRetypePassword}
+              secureTextEntry
+            />
 
-        <Image
-          source={require('./easybuylogo2.png')} 
-          style={styles.logo}
-          resizeMode="contain"
-        />
-
-
-        <Text style={styles.title}>EasyBuy</Text>
-
-      
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Retype Password"
-          value={retypePassword}
-          onChangeText={setRetypePassword}
-          secureTextEntry
-        />
-
-     
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+              <Text style={styles.buttonText}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -109,6 +123,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FCEADE',
+  },
+  keyboardAvoidingContainer: {
+    flex: 1,
   },
   backButton: {
     marginTop: 10,
@@ -131,7 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: -50,
   },
   title: {
-    fontSize:11,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
   },
