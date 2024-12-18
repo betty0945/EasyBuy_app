@@ -4,6 +4,7 @@ import { db, auth } from './FirebaseConfig';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { useFontSize } from './FontSizeContext';
 
 const StorePage = () => {
   const [stores, setStores] = useState([]);
@@ -14,6 +15,7 @@ const StorePage = () => {
   const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
   const currentRoute = useNavigationState(state => state.routes[state.index].name);
+  const { fontSize } = useFontSize();
 
   const fetchStores = async () => {
     try {
@@ -31,7 +33,6 @@ const StorePage = () => {
       setLoading(false);
     }
   };
-
 
   const fetchCartCount = async () => {
     if (!userId) return;
@@ -82,8 +83,8 @@ const StorePage = () => {
       style={styles.store}
     >
       <Image source={{ uri: item.imageURL }} style={styles.storeImage} />
-      <Text style={styles.storeName}>{item.name}</Text>
-      <Text style={styles.storeDescription}>{item.location}</Text>
+      <Text style={[styles.storeName, { fontSize }]}>{item.name}</Text>
+      <Text style={[styles.storeDescription, { fontSize }]}>{item.location}</Text>
     </TouchableOpacity>
   );
 
@@ -91,7 +92,6 @@ const StorePage = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#fceade" />
       <View style={styles.navBar}>
-
         <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Home')}>
           <Ionicons
             name="home"
@@ -99,8 +99,6 @@ const StorePage = () => {
             color={currentRoute === 'Home' ? '#25ced1' : 'black'}
           />
         </TouchableOpacity>
-
-    
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons
             name="storefront-outline"
@@ -108,25 +106,20 @@ const StorePage = () => {
             color={ '#25ced1' }
           />
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.iconButton} onPress={handleCartPress}>
           <Ionicons name="cart" size={25} color="black" />
           {cartCount > 0 && (
             <View style={styles.cartBadge}>
-              <Text style={styles.cartBadgeText}>{cartCount}</Text>
+              <Text style={[styles.cartBadgeText, { fontSize: fontSize * 0.75 }]}>{cartCount}</Text>
             </View>
           )}
         </TouchableOpacity>
-
-
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => navigation.navigate('AccountPage')}
         >
           <Ionicons name="person" size={25} color="black" />
         </TouchableOpacity>
-
-
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => navigation.navigate('Settings')}
@@ -134,11 +127,10 @@ const StorePage = () => {
           <Ionicons name="settings" size={25} color="black" />
         </TouchableOpacity>
       </View>
-
       <View style={styles.searchBar}>
         <TextInput
           placeholder="Search for stores"
-          style={styles.searchInput}
+          style={[styles.searchInput, { fontSize }]}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -146,9 +138,8 @@ const StorePage = () => {
           <Ionicons name="search" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
-
       {loading ? (
-        <Text style={styles.loadingText}>Loading stores...</Text>
+        <Text style={[styles.loadingText, { fontSize }]}>Loading stores...</Text>
       ) : (
         <FlatList
           data={filteredStores}
@@ -156,7 +147,7 @@ const StorePage = () => {
           keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={styles.columnWrapper}
-          ListEmptyComponent={<Text>No stores available</Text>}
+          ListEmptyComponent={<Text style={[styles.emptyText, { fontSize }]}>No stores available</Text>}
         />
       )}
     </SafeAreaView>
@@ -194,7 +185,6 @@ const styles = StyleSheet.create({
   },
   cartBadgeText: {
     color: 'white',
-    fontSize: 12,
     fontWeight: 'bold',
   },
   searchBar: {
@@ -223,7 +213,11 @@ const styles = StyleSheet.create({
   loadingText: {
     textAlign: 'center',
     marginTop: 20,
-    fontSize: 18,
+    color: 'gray',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
     color: 'gray',
   },
   columnWrapper: {
@@ -245,12 +239,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   storeName: {
-    fontSize: 16,
     fontWeight: 'bold',
     marginTop: 8,
   },
   storeDescription: {
-    fontSize: 12,
     marginTop: 4,
     color: 'gray',
   },

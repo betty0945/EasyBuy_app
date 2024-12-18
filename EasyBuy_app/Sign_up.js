@@ -69,7 +69,7 @@ export default function SignUpPage() {
           style={styles.keyboardAvoidingContainer}
         >
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={[styles.backButtonText, { fontSize }]}>← Back</Text>
           </TouchableOpacity>
 
           <View style={styles.container}>
@@ -79,30 +79,28 @@ export default function SignUpPage() {
               resizeMode="contain"
             />
 
-          
-
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize }]}
               placeholder="Username"
               value={username}
               onChangeText={setUsername}
             />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize }]}
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
             />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize }]}
               placeholder="Password"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize }]}
               placeholder="Retype Password"
               value={retypePassword}
               onChangeText={setRetypePassword}
@@ -110,7 +108,7 @@ export default function SignUpPage() {
             />
 
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-              <Text style={styles.buttonText}>Sign Up</Text>
+              <Text style={[styles.buttonText, { fontSize }]}>Sign Up</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -133,7 +131,6 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     color: '#25CED1',
-    fontSize: 16,
     fontWeight: 'bold',
   },
   container: {
@@ -148,7 +145,6 @@ const styles = StyleSheet.create({
     marginBottom: -50,
   },
   title: {
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
   },

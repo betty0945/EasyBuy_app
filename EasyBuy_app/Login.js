@@ -50,7 +50,7 @@ export default function LoginPage() {
           style={styles.keyboardAvoidingContainer}
         >
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={[styles.backButtonText, { fontSize }]}>← Back</Text>
           </TouchableOpacity>
 
           <View style={styles.container}>
@@ -61,7 +61,7 @@ export default function LoginPage() {
             />
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize }]}
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
@@ -69,7 +69,7 @@ export default function LoginPage() {
             />
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize }]}
               placeholder="Password"
               value={password}
               onChangeText={setPassword}
@@ -77,18 +77,18 @@ export default function LoginPage() {
             />
 
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={[styles.buttonText, { fontSize }]}>Login</Text>
             </TouchableOpacity>
 
             <Text
-              style={styles.link}
+              style={[styles.link, { fontSize }]}
               onPress={() =>
                 Alert.alert('Reset Password', 'Redirect to reset password functionality.')
               }
             >
               Forgot password
             </Text>
-            <Text style={styles.link} onPress={() => navigation.navigate('SignUp')}>
+            <Text style={[styles.link, { fontSize }]} onPress={() => navigation.navigate('SignUp')}>
               Create account
             </Text>
           </View>
@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     color: '#25CED1',
-    fontSize: 16,
     fontWeight: 'bold',
   },
   container: {
@@ -154,7 +153,6 @@ const styles = StyleSheet.create({
   link: {
     color: '#25CED1',
     marginTop: 10,
-    fontSize: 16,
     textDecorationLine: 'underline',
   },
 });

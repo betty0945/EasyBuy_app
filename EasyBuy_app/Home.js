@@ -1,8 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { getAuth } from 'firebase/auth';
+import { useFontSize } from './FontSizeContext';
 
 const HomePage = ({ navigation }) => {
+  const { fontSize } = useFontSize();
+
   const handleLoginPress = () => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -23,8 +26,8 @@ const HomePage = ({ navigation }) => {
           resizeMode="contain" 
         />
         
-        <Text style={styles.title}>Welcome to Easy Buy!</Text>
-        <Text style={styles.description}>
+        <Text style={[styles.title, { fontSize }]}>Welcome to Easy Buy!</Text>
+        <Text style={[styles.description, { fontSize }]}>
           Your ultimate shopping companion! Explore nearby stores, add your favorite products to the cart, and enjoy quick and seamless checkout—all at your fingertips.
         </Text>
 
@@ -33,13 +36,13 @@ const HomePage = ({ navigation }) => {
             style={styles.button}
             onPress={handleLoginPress}
           >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={[styles.buttonText, { fontSize }]}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.registerButton]}
             onPress={() => navigation.navigate('SignUp')}
           >
-            <Text style={styles.buttonText}>Register</Text>
+            <Text style={[styles.buttonText, { fontSize }]}>Register</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -64,14 +67,12 @@ const styles = StyleSheet.create({
     marginBottom: -50,
   },
   title: {
-    fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 10,
     textAlign: 'center',
   },
   description: {
-    fontSize: 18,
     color: '#555',
     textAlign: 'center',
     marginBottom: 30,
@@ -100,7 +101,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
   },
 });

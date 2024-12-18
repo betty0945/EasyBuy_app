@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Pressable, SafeAreaView, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, Button, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { useFontSize } from './FontSizeContext';
 
 const SettingsPage = () => {
-  const [fontSize, setFontSize] = useState(16);
+  const { fontSize, setFontSize } = useFontSize();
   const navigation = useNavigation();
   const currentRoute = useNavigationState(state => state.routes[state.index].name);
 
@@ -25,24 +26,18 @@ const SettingsPage = () => {
           <Ionicons name="person" size={25} color={currentRoute === 'AccountPage' ? '#25ced1' : 'black'} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>
-          <Ionicons
-            name="settings"
-            size={25}
-            color={ '#25ced1'}
-          />
+          <Ionicons name="settings" size={25} color={'#25ced1'} />
         </TouchableOpacity>
       </View>
 
       {/* Settings Content */}
       <View style={styles.container}>
-        <View style={styles.header}>
-         
-        </View>
+        <View style={styles.header}></View>
         <View style={styles.settingsBox}>
-          <Text style={styles.settingsLabel}>Text Size</Text>
+          <Text style={[styles.settingsLabel, { fontSize }]}>Text Size</Text>
           <View style={styles.fontSizeControls}>
             <Button title="-" onPress={() => setFontSize(fontSize - 1)} />
-            <Text style={styles.fontSizeText}>{fontSize}</Text>
+            <Text style={[styles.fontSizeText, { fontSize }]}>{fontSize}</Text>
             <Button title="+" onPress={() => setFontSize(fontSize + 1)} />
           </View>
         </View>
@@ -70,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    paddingTop: 20, 
+    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
